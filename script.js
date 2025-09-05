@@ -1,93 +1,192 @@
-/* Styles.css*/
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+// Script.js
+
+// Constants for tag options
+const tagOptions = [
+    "p", "h1", "h2",
+    "h3", "h4", "h5",
+    "h6", "span",
+];
+
+// Get DOM elements
+const optionsContainer =
+    document.querySelector(".options");
+const outputContainer =
+    document.querySelector(".output");
+const tagsSelect =
+    document.getElementById("tags");
+const paragraphsSlider =
+    document.getElementById(
+        "paragraphs"
+    );
+const wordsSlider =
+    document.getElementById("words");
+const paragraphsValue =
+    document.getElementById(
+        "paragraphsValue"
+    );
+const wordsValue =
+    document.getElementById(
+        "wordsValue"
+    );
+
+// Create Options UI
+function createOptionsUI() {
+
+//  With tag options, fill up the <select> element.
+    tagOptions.forEach((tag) => {
+        const option =
+            document.createElement(
+                "option"
+            );
+        option.value = tag;
+        option.textContent = `<${tag}>`;
+        tagsSelect.appendChild(option);
+    });
+
+//  Event listeners for sliders
+    paragraphsSlider.addEventListener(
+        "input",
+        updateParagraphsValue
+    );
+    wordsSlider.addEventListener(
+        "input",
+        updateWordsValue
+    );
+
+    const generateButton =
+        document.getElementById(
+            "generate"
+        );
+    generateButton.addEventListener(
+        "click",
+        generateLoremIpsum
+    );
 }
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
+// Update the displayed value for Paragraphs
+function updateParagraphsValue() {
+    paragraphsValue.textContent =
+        paragraphsSlider.value;
 }
 
-header {
-    background-color: white;
-    color: green;
-    text-align: center;
-    padding: 20px 0;
-    box-shadow: 0px 4px 8px 0px
-        rgba(0, 0, 0, 0.2);
+// Words per Paragraph have got 
+// to be updated on the display
+function updateWordsValue() {
+    wordsValue.textContent =
+        wordsSlider.value;
 }
 
-h1 {
-    font-size: 28px;
+// Generate Lorem Ipsum text
+function generateLoremIpsum() {
+    const paragraphs = parseInt(
+        paragraphsSlider.value
+    );
+    const tag =
+        document.getElementById(
+            "tags"
+        ).value;
+    const includeHtml =
+        document.getElementById(
+            "include"
+        ).value;
+    const wordsPerParagraph = parseInt(
+        wordsSlider.value
+    );
+
+    const loremIpsumText = generateText(
+        paragraphs,
+        tag,
+        includeHtml,
+        wordsPerParagraph
+    );
+    displayLoremIpsum(loremIpsumText);
 }
 
-main {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0px 4px 8px
-        rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
+// Function to generate Lorem Ipsum text
+function generateText(
+    paragraphs,
+    tag,
+    includeHtml,
+    wordsPerParagraph
+) {
+    
+    //  Use a placeholder text as an 
+    //  Example for illustrating.
+    const placeholderText =
+        `Lorem ipsum dolor sit amet 
+        consectetur adipiscing elit sed 
+        do eiusmod tempor incididunt ut
+        labore et dolore magna aliqua.`;
+
+    // Create an array of paragraphs
+    const loremIpsumArray = new Array(
+        paragraphs
+    ).fill("");
+
+    // Generate words for each paragraph
+    for (
+        let i = 0;
+        i < paragraphs;
+        i++
+    ) {
+        const words = generateWords(
+            wordsPerParagraph
+        );
+        loremIpsumArray[i] =
+            includeHtml === "Yes"
+                ? `<${tag}>${words}</${tag}>`
+                : words;
+    }
+
+    // Join paragraphs into a single string
+    return loremIpsumArray.join("\n");
 }
 
-.options {
-    margin-bottom: 20px;
+// Function to generate a specified number of words
+function generateWords(numWords) {
+    
+    // Lorem Ipsum text for demonstration purposes
+    const loremIpsumText =
+        `Lorem ipsum dolor sit amet, consectetur 
+        adipiscing elit, sed do eiusmod tempor 
+        incididunt ut labore et dolore magna 
+        aliqua. Diam in arcu cursus euismod 
+        quis viverra nibh. Nunc aliquet bibendum
+        enim facilisis gravida neque convallis 
+        a cras. Sagittis purus sit amet volutpat
+        Consequat mauris. Duis ultricies lacus 
+        sed turpis tincidunt id. Consequat interdum
+        varius sit amet mattis vulputate. Enim sed
+        faucibus turpis in eu. Ridiculus mus mauris
+        vitae ultricies leo integer malesuada nunc vel.
+        Nulla pharetra diam sit amet nisl suscipit.
+        Lobortis elementum nibh tellus molestie nunc
+        non blandit massa enim. Dis parturient montes
+        nascetur ridiculus mus. Justo nec ultrices dui
+        sapien eget. Enim tortor at auctor urna nunc.
+        Dictumst quisque sagittis purus sit amet volutpat
+        consequat mauris nunc.`;
+
+
+    // Split the Lorem Ipsum text into words
+    const words =
+        loremIpsumText.split(" ");
+
+    // Ensure the number of words requested is 
+    // within the bounds of the available words
+    if (numWords <= words.length) {
+        return words
+            .slice(0, numWords)
+            .join(" ");
+    } else {
+        return words.join(" ");
+    }
 }
 
-.options label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333;
+// Display Lorem Ipsum text
+function displayLoremIpsum(text) {
+    outputContainer.innerHTML = text;
 }
 
-.options input[type="range"],
-.options select,
-.options input[type="number"] {
-    width: 100%;
-    padding: 17px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 13px;
-    background-color: #f9f9f9;
-    box-shadow: 0px 2px 4px
-        rgba(0, 0, 0, 0.1);
-    color: #000;
-}
-
-.options select {
-    appearance: none;
-}
-
-.options button {
-    display: block;
-    width: 100%;
-    padding: 15px;
-    background-color: green;
-    color: #fff;
-    font-size: 20px;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s
-        ease;
-}
-
-.options button:hover {
-    background-color: rgb(20, 107, 20);
-}
-
-.output {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 10px;
-    border: 2px solid crimson;
-    min-height: 200px;
-    box-shadow: 5px 5px 15px 5px
-        rgba(0, 0, 0, 0.2);
-    color: #333;
-}
+// Initialize the app
+createOptionsUI();
